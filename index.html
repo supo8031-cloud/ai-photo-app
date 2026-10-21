@@ -2,106 +2,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#10101c">
-  <title>AI Photo Studio</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 24px;
-      background: #10101c;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
-    h1 { color: #a78bfa; font-size: 30px; }
-    p { color: #c4c4d4; line-height: 1.6; }
-    .card {
-      margin-top: 24px;
-      padding: 22px;
-      background: #202034;
-      border-radius: 20px;
-      text-align: center;
-    }
-    .preview {
-      min-height: 180px;
-      display: grid;
-      place-items: center;
-      border: 2px dashed #777099;
-      border-radius: 14px;
-      margin-bottom: 18px;
-      color: #c4c4d4;
-      overflow: hidden;
-    }
-    .preview img {
-      max-width: 100%;
-      max-height: 300px;
-    }
-    button, .upload {
-      display: inline-block;
-      width: 100%;
-      margin-top: 12px;
-      padding: 14px;
-      border: 0;
-      border-radius: 12px;
-      background: #8b5cf6;
-      color: white;
-      font-size: 16px;
-      text-align: center;
-    }
-    input { display: none; }
-    .note { font-size: 13px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10101c">
+<title>AI Photo Studio</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:22px;background:#10101c;color:white;font-family:Arial,sans-serif}
+h1{color:#b69cff;margin-bottom:6px}
+p{color:#c4c4d4;line-height:1.5}
+.card{background:#202034;padding:18px;border-radius:18px;margin-top:20px}
+.preview{min-height:200px;display:grid;place-items:center;background:#151522;border:2px dashed #65558c;border-radius:14px;overflow:hidden;color:#c4c4d4}
+.preview img{width:100%;max-height:420px;object-fit:contain}
+label,.btn{display:block;width:100%;padding:14px;margin-top:12px;border:0;border-radius:11px;background:#8b5cf6;color:white;text-align:center;font-size:16px}
+input[type=file]{display:none}
+input[type=range]{width:100%;accent-color:#a78bfa}
+.controls{margin-top:18px}
+button:active,label:active{opacity:.8}
+.secondary{background:#34344b}
+.row{display:flex;gap:8px}
+.row button{flex:1}
+</style>
 </head>
 <body>
-  <h1>✨ AI Photo Studio</h1>
-  <p>Your photos, made beautiful.</p>
+<h1>✨ AI Photo Studio</h1>
+<p>Make your photos look better.</p>
 
-  <div class="card">
-    <div class="preview" id="preview">
-      Your photo will appear here
-    </div>
+<div class="card">
+  <div class="preview" id="preview">Choose a photo to start</div>
+  <label for="photo">📷 Choose Photo</label>
+  <input id="photo" type="file" accept="image/*">
 
-    <label class="upload" for="photo">
-      📷 Choose a Photo
-    </label>
-    <input id="photo" type="file" accept="image/*">
+  <div class="controls">
+    <p>☀️ Brightness: <span id="bv">100</span>%</p>
+    <input id="brightness" type="range" min="50" max="150" value="100">
 
-    <button onclick="resetPhoto()">Reset Photo</button>
+    <p>🎨 Saturation: <span id="sv">100</span>%</p>
+    <input id="saturation" type="range" min="0" max="200" value="100">
 
-    <p class="note">
-      Version 1.0 · AI Photo Studio
-    </p>
+    <p>⚫ Contrast: <span id="cv">100</span>%</p>
+    <input id="contrast" type="range" min="50" max="150" value="100">
+
+    <button class="btn secondary" id="reset">Reset edits</button>
+    <button class="btn" id="download">⬇️ Download Photo</button>
+    <p style="font-size:12px">Editing runs on your device. AI enhancement will be added separately.</p>
   </div>
+</div>
 
-  <script>
-    const picker = document.getElementById('photo');
-    const preview = document.getElementById('preview');
+<script>
+const picker=document.getElementById('photo');
+const preview=document.getElementById('preview');
+const brightness=document.getElementById('brightness');
+const saturation=document.getElementById('saturation');
+const contrast=document.getElementById('contrast');
+let image=new Image();
 
-    picker.addEventListener('change', function () {
-      const file = this.files[0];
-      if (!file) return;
-
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image.');
-        return;
-      }
-
-      const url = URL.createObjectURL(file);
-      preview.replaceChildren();
-
-      const img = document.createElement('img');
-      img.src = url;
-      img.alt = 'Selected photo';
-      preview.appendChild(img);
-    });
-
-    function resetPhoto() {
-      picker.value = '';
-      preview.replaceChildren();
-      preview.textContent = 'Your photo will appear here';
-    }
-  </script>
+function update(){
+ document.getElementById('bv').textContent=brightness.value;
+ document.getElementById('sv').textContent=saturation.value;
+ document.getElementById('cv').textContent=contrast.value;
+ if(image.src) image.style.filter=
+  `brightness(${brightness.value}%) saturate(${saturation.value}%) contrast(${contrast.value}%)`;
+}
+picker.addEventListener('change',()=>{
+ const file=picker.files[0];
+ if(!file)return;
+ if(!file.type.startsWith('image/')){alert('Choose an image file');return;}
+ const url=URL.createObjectURL(file);
+ image=new Image();
+ image.onload=()=>{preview.replaceChildren(image);update();};
+ image.src=url;
+});
+[brightness,saturation,contrast].forEach(el=>el.addEventListener('input',update));
+document.getElementById('reset').onclick=()=>{
+ brightness.value=100;saturation.value=100;contrast.value=100;update();
+};
+document.getElementById('download').onclick=()=>{
+ if(!image.src){alert('Please choose a photo first');return;}
+ const canvas=document.createElement('canvas');
+ canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+ const ctx=canvas.getContext('2d');
+ ctx.filter=`brightness(${brightness.value}%) saturate(${saturation.value}%) contrast(${contrast.value}%)`;
+ ctx.drawImage(image,0,0);
+ const a=document.createElement('a');
+ a.download='ai-photo-studio.jpg';
+ a.href=canvas.toDataURL('image/jpeg',0.92);
+ a.click();
+};
+</script>
 </body>
 </html>
