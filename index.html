@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10101c">
+  <title>AI Photo Studio</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #10101c;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    h1 { color: #a78bfa; font-size: 30px; }
+    p { color: #c4c4d4; line-height: 1.6; }
+    .card {
+      margin-top: 24px;
+      padding: 22px;
+      background: #202034;
+      border-radius: 20px;
+      text-align: center;
+    }
+    .preview {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      border: 2px dashed #777099;
+      border-radius: 14px;
+      margin-bottom: 18px;
+      color: #c4c4d4;
+      overflow: hidden;
+    }
+    .preview img {
+      max-width: 100%;
+      max-height: 300px;
+    }
+    button, .upload {
+      display: inline-block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      border: 0;
+      border-radius: 12px;
+      background: #8b5cf6;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+    }
+    input { display: none; }
+    .note { font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>✨ AI Photo Studio</h1>
+  <p>Your photos, made beautiful.</p>
+
+  <div class="card">
+    <div class="preview" id="preview">
+      Your photo will appear here
+    </div>
+
+    <label class="upload" for="photo">
+      📷 Choose a Photo
+    </label>
+    <input id="photo" type="file" accept="image/*">
+
+    <button onclick="resetPhoto()">Reset Photo</button>
+
+    <p class="note">
+      Version 1.0 · AI Photo Studio
+    </p>
+  </div>
+
+  <script>
+    const picker = document.getElementById('photo');
+    const preview = document.getElementById('preview');
+
+    picker.addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image.');
+        return;
+      }
+
+      const url = URL.createObjectURL(file);
+      preview.replaceChildren();
+
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = 'Selected photo';
+      preview.appendChild(img);
+    });
+
+    function resetPhoto() {
+      picker.value = '';
+      preview.replaceChildren();
+      preview.textContent = 'Your photo will appear here';
+    }
+  </script>
+</body>
+</html>
