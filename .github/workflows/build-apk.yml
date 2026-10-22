@@ -42,7 +42,7 @@ jobs:
           cat > capacitor.config.json <<'EOF'
           {
             "appId": "com.supo8031.aiphoto",
-            "appName": "AI Photo Studio",
+            "appName": "BK Family FC",
             "webDir": "www"
           }
           EOF
