@@ -1,5 +1,4 @@
-
-name: Build AI Photo Studio APK
+androidme: Build AI Photo Studio APK
 
 on:
   push:
@@ -52,6 +51,14 @@ jobs:
 
       - name: Sync Android project
         run: npx cap sync android
+        
+
+      - name: Generate App Icon
+        run: |
+          npm install --save-dev @capacitor/assets
+          mkdir -p assets
+          cp file_000000003f888211b80f8d60b539aa4f.png assets/icon.png
+          npx capacitor-assets generate --android
 
       - name: Build APK
         run: |
